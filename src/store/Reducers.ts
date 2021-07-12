@@ -6,7 +6,37 @@ export const reducers = (
 ): IGlobalState => {
   switch (action.type) {
     case ACTIONS.CREATE_NEW_ITEM:
-      return { items: [...state.items, action.payload] };
+      return { ...state, items: [...state.items, action.payload] };
+    case ACTIONS.CHANGE_ITEMS_NAME:
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, name: action.payload.name };
+          }
+          return item;
+        }),
+      };
+    case ACTIONS.CHANGE_ITEMS_VALUE:
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, value: action.payload.value };
+          }
+          return item;
+        }),
+      };
+    case ACTIONS.INCREMENT_ITEMS_VALUE:
+      return {
+        ...state,
+        items: state.items.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, value: item.value + action.payload.increment };
+          }
+          return item;
+        }),
+      };
     default:
       return state;
   }

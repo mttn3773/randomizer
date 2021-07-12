@@ -4,9 +4,10 @@ export enum ACTIONS {
   CREATE_NEW_ITEM = "CREATE_ITEM",
   CHANGE_ITEMS_NAME = "CHANGE_ITEMS_NAME",
   CHANGE_ITEMS_VALUE = "CHANGE_ITEMS_VALUE",
+  INCREMENT_ITEMS_VALUE = "INCREMENT_ITEMS_VALUE",
 }
 
-let maxId = 0;
+let maxId = 1;
 
 export const createItem = (): IAction<IItem> => {
   return {
@@ -15,6 +16,23 @@ export const createItem = (): IAction<IItem> => {
   };
 };
 
-export const changeItemsName = (name: string): IAction<{ name: string }> => {
-  return { type: ACTIONS.CHANGE_ITEMS_NAME, payload: { name } };
+export const changeItemsName = (
+  name: string,
+  id: number
+): IAction<{ name: string; id: number }> => {
+  return { type: ACTIONS.CHANGE_ITEMS_NAME, payload: { name, id } };
+};
+
+export const changeItemsValue = (
+  value: number,
+  id: number
+): IAction<{ value: number; id: number }> => {
+  return { type: ACTIONS.CHANGE_ITEMS_VALUE, payload: { value, id } };
+};
+
+export const incrementItemsValue = (
+  increment: number,
+  id: number
+): IAction<{ increment: number; id: number }> => {
+  return { type: ACTIONS.INCREMENT_ITEMS_VALUE, payload: { increment, id } };
 };

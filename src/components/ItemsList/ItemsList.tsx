@@ -4,7 +4,7 @@ import { IItem } from "../../interfaces/item.interface";
 import { createItem } from "../../store/Actions";
 import { DataContext } from "../../store/GlobalStore";
 import { AuctionItem } from "../AuctionItem/AuctionItem";
-
+import "./ItemsList.scss";
 interface ItemsListProps {
   items: IItem[];
 }

@@ -1,3 +1,40 @@
 .item {
   display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 2rem;
+  height: 2.5rem;
+  .index {
+    width: 5%;
+  }
+  i {
+    font-style: normal;
+    border: solid 2px hsl(200, 30, 30);
+    padding: 0.5rem 0.5rem;
+    border-radius: 25%;
+  }
+  button {
+    background: none;
+    border: none;
+    color: #efefef;
+    font-size: 2em;
+    cursor: pointer;
+  }
+  input {
+    background-color: hsl(0, 0, 30);
+    padding: 0.4rem 1rem;
+    width: 50%;
+    color: #efefef;
+    border: solid 1px hsl(0, 0, 60);
+    &:focus {
+      outline: none;
+      border: solid 2px hsl(200, 50, 40);
+    }
+    &.price-input {
+      width: 10%;
+    }
+    &.increment-input {
+      width: 5%;
+    }
+  }
 }
