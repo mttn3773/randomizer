@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { useEffect } from "react";
 import { ItemsList } from "./components/ItemsList/ItemsList";
+import { Wheel } from "./components/Wheel/Wheel";
 import { DataContext } from "./store/GlobalStore";
 import "./styles/global.scss";
 
@@ -12,6 +13,7 @@ function App() {
       {JSON.stringify(state, null, 12)}
 
       <ItemsList items={items} />
+      <Wheel />
     </div>
   );
 }
