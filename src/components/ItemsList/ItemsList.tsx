@@ -10,7 +10,7 @@ interface ItemsListProps {
 }
 
 export const ItemsList: React.FC<ItemsListProps> = ({ items }) => {
-  const { state, dispatch } = useContext(DataContext);
+  const { dispatch } = useContext(DataContext);
   const handleCreateNewItem = () => {
     return dispatch(createItem());
   };

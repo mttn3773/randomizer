@@ -22,10 +22,12 @@ export const AuctionItem: React.FC<AuctionItemProps> = ({ item }) => {
     valueInputRef.current!.value = item.value.toString();
   }, [item.value]);
   const handleChangeName = (name: string) => {
+    if (name === item.name) return;
     dispatch(changeItemsName(name, item.id));
   };
   const handleChangeValue = (value: string) => {
     let number = parseInt(value);
+    if (number === item.value) return;
     if (isNaN(number)) {
       valueInputRef.current!.value = item.value.toString();
       number = item.value;
@@ -34,9 +36,10 @@ export const AuctionItem: React.FC<AuctionItemProps> = ({ item }) => {
   };
   const handleIncrement = (value: string) => {
     let number = parseInt(value);
-    if (isNaN(number)) {
+    if (isNaN(number) || number === 0) {
       incrementInputRef.current!.value = "";
       number = 0;
+      return;
     }
     dispatch(incrementItemsValue(number, item.id));
     incrementInputRef.current!.value = "";

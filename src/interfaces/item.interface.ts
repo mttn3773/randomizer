@@ -3,3 +3,8 @@ export interface IItem {
   name: string;
   value: number;
 }
+
+export interface INormalizedItem {
+  name: string;
+  percentage: number;
+}

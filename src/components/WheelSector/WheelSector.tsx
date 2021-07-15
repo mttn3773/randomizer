@@ -1,10 +1,5 @@
 import React from "react";
-import { useState } from "react";
-import {
-  converPercantageToDegrees,
-  convertAngleToRadians,
-  polarToCartesian,
-} from "../../utils/drawCircle";
+import { convertAngleToRadians } from "../../utils/drawCircle";
 import { Point } from "../SVGWheel/SVGWheel";
 import "./WheelSector.scss";
 
@@ -17,6 +12,7 @@ interface WheelSectorProps {
   fillColor: string;
   largeArcFlag: boolean;
   angle: number;
+  text?: string;
 }
 export const WheelSector: React.FC<WheelSectorProps> = ({
   centerX,
@@ -27,10 +23,12 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
   fillColor,
   largeArcFlag,
   angle,
+  text,
 }) => {
   const rad = convertAngleToRadians(angle);
   const textX = centerX + radius * Math.cos(rad) * 0.5;
   const textY = centerY + radius * Math.sin(rad) * 0.5;
+
   return (
     <svg>
       <path
@@ -47,8 +45,15 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
         dominantBaseline="middle"
         textAnchor="middle"
         transform={`translate(${textX}, ${textY})rotate(${angle})`}
+        stroke="#efefef"
+        style={{
+          letterSpacing: "0.05em",
+          fontWeight: "bold",
+          textShadow:
+            "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+        }}
       >
-        Hello
+        {text}
       </text>
     </svg>
   );
