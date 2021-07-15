@@ -1,4 +1,7 @@
-.chart {
-  transition: 3s ease-in-out;
-  transform: rotate(720deg);
+.wheel {
+  background-color: transparent;
+  &.animate {
+    transition: 10s ease-in-out;
+    transform: rotate(720deg);
+  }
 }

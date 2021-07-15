@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { Chart, ChartItem } from "chart.js";
 import "./Wheel.scss";
+import { SVGWheel } from "../SVGWheel/SVGWheel";
 interface WheelProps {}
 type Point = {
   x: number;
@@ -10,6 +11,7 @@ type Point = {
 };
 export const Wheel: React.FC<WheelProps> = ({}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [animate, setAnimate] = useState<boolean>(false);
   useEffect(() => {
     if (!canvasRef.current) return;
     drawCIrcle();
@@ -45,5 +47,15 @@ export const Wheel: React.FC<WheelProps> = ({}) => {
     }
     ctx.rotate(90);
   };
-  return <canvas style={{ backgroundColor: "#efefef" }} ref={canvasRef} />;
+
+  return (
+    <>
+      <canvas
+        onClick={() => setAnimate(true)}
+        className={`wheel ${animate ? "animate" : ""}`}
+        ref={canvasRef}
+      />
+      <SVGWheel />
+    </>
+  );
 };
