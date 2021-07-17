@@ -1,6 +1,9 @@
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { useWinner } from "../../hooks/useWinner";
 import { INormalizedItem } from "../../interfaces/item.interface";
+import { defineWinner } from "../../utils/defineWinner";
 import {
   converPercantageToDegrees,
   polarToCartesian,
@@ -19,15 +22,20 @@ interface SVGWheelProps {
   normalizedItemsList: INormalizedItem[];
 }
 
-const sectorsArr = [11, 19, 30, 1, 7, 32];
 const colorArr = ["red", "blue", "teal", "coral", "purple", "yellow"];
 
-export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
-  const centerX = WIDTH / 2;
-  const centerY = HEIGHT / 2;
-  const radius = WIDTH / 2;
+const centerX = WIDTH / 2;
+const centerY = HEIGHT / 2;
+const radius = WIDTH / 2;
 
-  console.log(normalizedItemsList);
+export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
+  const [seed, setSeed] = useState<number | null>(null);
+  const [winner, setWinner] = useState<INormalizedItem | null>(null);
+  useEffect(() => {
+    if (!seed) return;
+    const winner = defineWinner(seed, normalizedItemsList);
+    setWinner(winner);
+  }, [seed]);
 
   const drawSectors = (): JSX.Element[] => {
     const resultArr: JSX.Element[] = [];
@@ -37,19 +45,26 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
       const incrementAngle = converPercantageToDegrees(percentage);
       const textAngle = (angle * 2 + incrementAngle) / 2;
       angle += incrementAngle;
+
       const [x, y] = polarToCartesian(centerX, centerY, radius, angle);
       const endPoint: Point = { x, y };
+      const fillColor =
+        index < colorArr.length
+          ? colorArr[index]
+          : colorArr[Math.floor(Math.random() * colorArr.length)];
       const largeArcFlag = !!(percentage >= 50);
+
       const sector = (
         <WheelSector
+          percantage={percentage}
           key={index}
           centerX={centerX}
           centerY={centerY}
           endPoint={endPoint}
           startPoint={startPoint}
           radius={radius}
-          text={percentage > 5 ? name : ""}
-          fillColor={colorArr[index]}
+          text={percentage > 1 ? name : ""}
+          fillColor={fillColor}
           largeArcFlag={largeArcFlag}
           angle={textAngle}
         />
@@ -59,11 +74,15 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
     });
     return resultArr;
   };
+
   const sectors = drawSectors();
   return (
-    <svg width={WIDTH} height={HEIGHT}>
-      <circle cx={centerX} cy={centerY} r={radius} />
-      {sectors.map((sector) => sector)}
-    </svg>
+    <>
+      <button onClick={() => setSeed(Math.random())}> ROLL </button>
+      {winner && <h1>Winner is {winner.name}</h1>}
+      <svg width={WIDTH} height={HEIGHT}>
+        {sectors.map((sector) => sector)}
+      </svg>
+    </>
   );
 };

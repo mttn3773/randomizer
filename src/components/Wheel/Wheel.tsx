@@ -18,8 +18,6 @@ export const Wheel: React.FC<WheelProps> = ({}) => {
   const { state } = useContext(DataContext);
   const { items } = state;
 
-  const normalizedItems = mapItemsToNormalized(items);
-
   useEffect(() => {
     if (!canvasRef.current) return;
     drawCIrcle();
@@ -58,12 +56,11 @@ export const Wheel: React.FC<WheelProps> = ({}) => {
 
   return (
     <>
-      {/* <canvas
+      <canvas
         onClick={() => setAnimate(true)}
         className={`wheel ${animate ? "animate" : ""}`}
         ref={canvasRef}
-      /> */}
-      <SVGWheel normalizedItemsList={normalizedItems} />
+      />
     </>
   );
 };

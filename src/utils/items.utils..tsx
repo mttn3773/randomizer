@@ -12,8 +12,9 @@ export const mapItemsToNormalized = (items: IItem[]): INormalizedItem[] => {
   const resultMap: INormalizedItem[] = [];
   const summary = calculateSummary(items);
   items.map(({ value, name }) => {
+    if (value === 0) return resultMap.push({ percentage: 0, name });
     const percentage = (value / summary) * 100;
-    resultMap.push({ percentage, name });
+    return resultMap.push({ percentage, name });
   });
   return resultMap;
 };

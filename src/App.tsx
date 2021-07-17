@@ -1,19 +1,19 @@
 import React, { useContext } from "react";
-import { useEffect } from "react";
 import { ItemsList } from "./components/ItemsList/ItemsList";
-import { Wheel } from "./components/Wheel/Wheel";
+import { SVGWheel } from "./components/SVGWheel/SVGWheel";
 import { DataContext } from "./store/GlobalStore";
 import "./styles/global.scss";
+import { mapItemsToNormalized } from "./utils/items.utils.";
 
 function App() {
   const { state } = useContext(DataContext);
   const { items } = state;
+  const normalizedItems = mapItemsToNormalized(items);
+
   return (
     <div>
-      {JSON.stringify(state, null, 12)}
-
       <ItemsList items={items} />
-      <Wheel />
+      <SVGWheel normalizedItemsList={normalizedItems} />
     </div>
   );
 }
