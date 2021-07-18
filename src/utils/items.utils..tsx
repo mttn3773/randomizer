@@ -1,20 +1,17 @@
 import { IItem, INormalizedItem } from "../interfaces/item.interface";
-
-export const calculateSummary = (items: IItem[]): number => {
-  let sum = 0;
-  items.map((item) => {
-    sum += item.value;
-  });
-  return sum;
-};
+import { calculateSummary } from "./common.utils";
 
 export const mapItemsToNormalized = (items: IItem[]): INormalizedItem[] => {
   const resultMap: INormalizedItem[] = [];
   const summary = calculateSummary(items);
-  items.map(({ value, name }) => {
+  items.forEach(({ value, name }) => {
     if (value === 0) return resultMap.push({ percentage: 0, name });
     const percentage = (value / summary) * 100;
-    return resultMap.push({ percentage, name });
+    resultMap.push({ percentage, name });
+  });
+  resultMap.sort((el1, el2) => {
+    if (el1.percentage < el2.percentage) return 1;
+    return 0;
   });
   return resultMap;
 };

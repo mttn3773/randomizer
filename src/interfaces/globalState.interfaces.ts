@@ -6,5 +6,5 @@ export interface IGlobalState {
 
 export interface IAction<K = any> {
   type: ACTIONS;
-  payload: K;
+  payload?: K;
 }

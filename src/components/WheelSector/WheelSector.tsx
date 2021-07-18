@@ -1,4 +1,5 @@
 import React from "react";
+import { textToFit } from "../../utils/common.utils";
 import { convertAngleToRadians } from "../../utils/drawCircle";
 import { Point } from "../SVGWheel/SVGWheel";
 import "./WheelSector.scss";
@@ -27,9 +28,9 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
   angle,
   text,
 }) => {
-  if (!percantage) return null;
   const rad = convertAngleToRadians(angle);
   const textX = centerX + radius * Math.cos(rad) * 0.5;
+
   const textY = centerY + radius * Math.sin(rad) * 0.5;
   let arcFlag = largeArcFlag ? 1 : 0;
   const calculateFontSize = () => {
@@ -58,7 +59,9 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
         fontSize={calculateFontSize()}
         dominantBaseline="middle"
         textAnchor="middle"
-        transform={`translate(${textX}, ${textY})rotate(${angle})`}
+        transform={`translate(${textX}, ${textY})rotate(${
+          textX < centerX ? angle + 180 : angle
+        })`}
         stroke="#efefef"
         style={{
           letterSpacing: "0.05em",
@@ -67,7 +70,7 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
             "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
         }}
       >
-        {text}
+        {textToFit(text || "")}
       </text>
     </svg>
   );

@@ -1,7 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useWinner } from "../../hooks/useWinner";
+import React, { useEffect, useMemo, useState } from "react";
 import { INormalizedItem } from "../../interfaces/item.interface";
 import { defineWinner } from "../../utils/defineWinner";
 import {
@@ -9,6 +6,10 @@ import {
   polarToCartesian,
 } from "../../utils/drawCircle";
 import { WheelSector } from "../WheelSector/WheelSector";
+import "./SVGWheel.scss";
+import gsap from "gsap";
+import { useRef } from "react";
+import { calculateSpinAngle } from "../../utils/spin";
 
 const WIDTH = 600;
 const HEIGHT = 600;
@@ -29,29 +30,25 @@ const centerY = HEIGHT / 2;
 const radius = WIDTH / 2;
 
 export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
-  const [seed, setSeed] = useState<number | null>(null);
   const [winner, setWinner] = useState<INormalizedItem | null>(null);
-  useEffect(() => {
-    if (!seed) return;
-    const winner = defineWinner(seed, normalizedItemsList);
-    setWinner(winner);
-  }, [seed]);
-
+  const [animate, setAnimate] = useState<boolean>(false);
+  const [totalAngle, setTotalAngle] = useState<number>(0);
+  const wheelRef = useRef<SVGSVGElement | null>(null);
   const drawSectors = (): JSX.Element[] => {
     const resultArr: JSX.Element[] = [];
     let startPoint: Point = { x: centerX, y: 0 };
     let angle = -90;
-    normalizedItemsList.map(({ percentage, name }, index) => {
+    normalizedItemsList.forEach(({ percentage, name }, index) => {
+      if (!percentage) return;
       const incrementAngle = converPercantageToDegrees(percentage);
       const textAngle = (angle * 2 + incrementAngle) / 2;
       angle += incrementAngle;
-
       const [x, y] = polarToCartesian(centerX, centerY, radius, angle);
       const endPoint: Point = { x, y };
       const fillColor =
         index < colorArr.length
           ? colorArr[index]
-          : colorArr[Math.floor(Math.random() * colorArr.length)];
+          : colorArr[index % colorArr.length];
       const largeArcFlag = !!(percentage >= 50);
 
       const sector = (
@@ -74,15 +71,55 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
     });
     return resultArr;
   };
+  const handleAnimation = () => {
+    setAnimate(true);
+    const seed = Math.random();
+    const offset = totalAngle - Math.ceil(totalAngle / 360) * 360;
+    const newAngle = totalAngle + calculateSpinAngle(seed, offset);
+    setTotalAngle(newAngle);
+    const winner = defineWinner(seed, normalizedItemsList);
+    gsap
+      .timeline({
+        onComplete: () => {
+          setWinner(winner);
+          setAnimate(false);
+        },
+      })
+      .to(wheelRef.current, { rotate: newAngle, duration: 5 });
+  };
 
   const sectors = drawSectors();
+  console.log(sectors);
+
   return (
-    <>
-      <button onClick={() => setSeed(Math.random())}> ROLL </button>
-      {winner && <h1>Winner is {winner.name}</h1>}
-      <svg width={WIDTH} height={HEIGHT}>
-        {sectors.map((sector) => sector)}
-      </svg>
-    </>
+    <section>
+      <div
+        className="wheel-conteiner"
+        style={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          zIndex: 999,
+        }}
+      >
+        <div
+          className="selector-conteiner"
+          style={{ position: "absolute", top: 0 }}
+        >
+          <svg width="40" height="60">
+            <path d="M 20 0 L 0 30 L 40 30" />
+          </svg>
+        </div>
+        <svg ref={wheelRef} width={WIDTH} height={HEIGHT}>
+          {sectors.map((sector) => sector)}
+        </svg>
+      </div>
+      <div className="winner-info">
+        {<h1>Winner is {winner && !animate ? winner.name : "..."}</h1>}
+        <button disabled={animate} onClick={handleAnimation}>
+          ROLL
+        </button>
+      </div>
+    </section>
   );
 };

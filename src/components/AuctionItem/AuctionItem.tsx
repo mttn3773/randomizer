@@ -11,9 +11,10 @@ import { DataContext } from "../../store/GlobalStore";
 import "./AuctionItem.scss";
 interface AuctionItemProps {
   item: IItem;
+  index: number;
 }
 
-export const AuctionItem: React.FC<AuctionItemProps> = ({ item }) => {
+export const AuctionItem: React.FC<AuctionItemProps> = ({ item, index }) => {
   const { dispatch } = useContext(DataContext);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const valueInputRef = useRef<HTMLInputElement | null>(null);
@@ -47,7 +48,7 @@ export const AuctionItem: React.FC<AuctionItemProps> = ({ item }) => {
   return (
     <div className="item">
       <div className="index">
-        <i>#{item.id}</i>
+        <i>#{index + 1}</i>
       </div>
       <input
         ref={nameInputRef}
@@ -76,6 +77,7 @@ export const AuctionItem: React.FC<AuctionItemProps> = ({ item }) => {
         +
       </button>
       <input
+        placeholder="₽"
         ref={incrementInputRef}
         onKeyPress={(e) => {
           if (e.code === "Enter") {

@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { useReducer } from "react";
+import { useEffect } from "react";
 import { useContext } from "react";
 import { IAction, IGlobalState } from "../interfaces/globalState.interfaces";
 import { reducers } from "./Reducers";
