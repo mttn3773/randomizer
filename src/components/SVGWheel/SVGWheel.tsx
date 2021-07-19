@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { INormalizedItem } from "../../interfaces/item.interface";
 import { defineWinner } from "../../utils/defineWinner";
 import {
@@ -10,6 +10,9 @@ import "./SVGWheel.scss";
 import gsap from "gsap";
 import { useRef } from "react";
 import { calculateSpinAngle } from "../../utils/spin";
+import { useContext } from "react";
+import { DataContext } from "../../store/GlobalStore";
+import { mapItemsToNormalized } from "../../utils/items.utils.";
 
 const WIDTH = 600;
 const HEIGHT = 600;
@@ -21,6 +24,7 @@ export type Point = {
 
 interface SVGWheelProps {
   normalizedItemsList: INormalizedItem[];
+  setNormalizedItems: React.Dispatch<React.SetStateAction<INormalizedItem[]>>;
 }
 
 const colorArr = ["red", "blue", "teal", "coral", "purple", "yellow"];
@@ -29,16 +33,33 @@ const centerX = WIDTH / 2;
 const centerY = HEIGHT / 2;
 const radius = WIDTH / 2;
 
-export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
+export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
+  const {
+    state: { items },
+  } = useContext(DataContext);
   const [winner, setWinner] = useState<INormalizedItem | null>(null);
   const [animate, setAnimate] = useState<boolean>(false);
   const [totalAngle, setTotalAngle] = useState<number>(0);
+  const [isEliminatingMode, setEliminatingMode] = useState<boolean>(false);
+  const [normalizedItems, setNormalizedItems] = useState<INormalizedItem[]>([]);
+  const [eliminatedItems, setEliminatedItems] = useState<number[]>([]);
+  useEffect(() => {
+    const normalizedItems = mapItemsToNormalized(
+      items.filter(({ id }) => !eliminatedItems.includes(id)),
+      isEliminatingMode
+    );
+    setNormalizedItems(normalizedItems);
+  }, [eliminatedItems, items, isEliminatingMode]);
   const wheelRef = useRef<SVGSVGElement | null>(null);
+  const handleChangeMode = (e: ChangeEvent<HTMLInputElement>) => {
+    setEliminatedItems([]);
+    setEliminatingMode(e.target.checked);
+  };
   const drawSectors = (): JSX.Element[] => {
     const resultArr: JSX.Element[] = [];
     let startPoint: Point = { x: centerX, y: 0 };
     let angle = -90;
-    normalizedItemsList.forEach(({ percentage, name }, index) => {
+    normalizedItems.forEach(({ percentage, name }, index) => {
       if (!percentage) return;
       const incrementAngle = converPercantageToDegrees(percentage);
       const textAngle = (angle * 2 + incrementAngle) / 2;
@@ -71,17 +92,21 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
     });
     return resultArr;
   };
+  const handleEliminate = (winner: INormalizedItem) => {
+    setEliminatedItems((prev) => [...prev, winner.id]);
+  };
   const handleAnimation = () => {
     setAnimate(true);
     const seed = Math.random();
     const offset = totalAngle - Math.ceil(totalAngle / 360) * 360;
     const newAngle = totalAngle + calculateSpinAngle(seed, offset);
     setTotalAngle(newAngle);
-    const winner = defineWinner(seed, normalizedItemsList);
+    const winner = defineWinner(seed, normalizedItems);
     gsap
       .timeline({
         onComplete: () => {
           setWinner(winner);
+          if (isEliminatingMode) handleEliminate(winner);
           setAnimate(false);
         },
       })
@@ -89,8 +114,6 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
   };
 
   const sectors = drawSectors();
-  console.log(sectors);
-
   return (
     <section>
       <div
@@ -99,15 +122,23 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
           position: "relative",
           display: "flex",
           justifyContent: "center",
-          zIndex: 999,
         }}
       >
         <div
           className="selector-conteiner"
-          style={{ position: "absolute", top: 0 }}
+          style={{
+            zIndex: 999,
+            position: "absolute",
+            top: 0,
+            display: `${sectors.length ? "flex" : "none"}`,
+          }}
         >
           <svg width="40" height="60">
-            <path d="M 20 0 L 0 30 L 40 30" />
+            <path
+              stroke="#efefef"
+              strokeWidth="3px"
+              d="M 20 0 L 0 30 L 40 30 L 20 0"
+            />
           </svg>
         </div>
         <svg ref={wheelRef} width={WIDTH} height={HEIGHT}>
@@ -116,7 +147,18 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({ normalizedItemsList }) => {
       </div>
       <div className="winner-info">
         {<h1>Winner is {winner && !animate ? winner.name : "..."}</h1>}
-        <button disabled={animate} onClick={handleAnimation}>
+        <div>
+          <input
+            onChange={handleChangeMode}
+            type="checkbox"
+            id="elimination-mode"
+          />
+          <label htmlFor="elimination-mode"> Elimination mode </label>
+        </div>
+        <button
+          disabled={animate || normalizedItems.length < 2}
+          onClick={handleAnimation}
+        >
           ROLL
         </button>
       </div>

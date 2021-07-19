@@ -7,4 +7,5 @@ export interface IItem {
 export interface INormalizedItem {
   name: string;
   percentage: number;
+  id: number;
 }
