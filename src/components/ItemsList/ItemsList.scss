@@ -1,8 +1,11 @@
-main {
+.auction-container {
   display: flex;
   flex-direction: column;
   justify-items: center;
   gap: 2rem;
+  h2 {
+    padding-left: 4rem;
+  }
 }
 
 .item-list {
@@ -28,7 +31,4 @@ main {
   &:hover {
     background: hsl(88, 79, 79);
   }
-}
-h2 {
-  padding-left: 4rem;
 }

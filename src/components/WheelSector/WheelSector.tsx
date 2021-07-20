@@ -29,20 +29,18 @@ export const WheelSector: React.FC<WheelSectorProps> = ({
   text,
 }) => {
   const rad = convertAngleToRadians(angle);
-  const textX = centerX + radius * Math.cos(rad) * 0.5;
-
-  const textY = centerY + radius * Math.sin(rad) * 0.5;
+  const textX = centerX + (radius * Math.cos(rad)) / 2;
+  const textY = centerY + (radius * Math.sin(rad)) / 2;
   let arcFlag = largeArcFlag ? 1 : 0;
   const calculateFontSize = () => {
     if (percantage > 10) return 20;
-    return (20 / 100) * percantage * 10;
+    return percantage * 2;
   };
   const circle = (
     <circle cx={centerX} cy={centerY} r={radius} fill={fillColor} />
   );
   const sector = (
     <path
-      className="sector"
       strokeWidth={2}
       stroke="black"
       d={`M ${centerX}, ${centerY} 

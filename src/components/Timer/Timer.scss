@@ -1,0 +1,36 @@
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.time-display-container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  font-size: 1.6em;
+}
+.btn-group {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  button {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.2em 0.2em;
+    width: fit-content;
+    display: flex;
+    font-size: 1.8em;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      background: hsl(0, 0, 30);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    svg {
+      color: #efefef;
+    }
+  }
+}

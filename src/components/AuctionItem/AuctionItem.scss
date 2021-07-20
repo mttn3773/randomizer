@@ -19,6 +19,10 @@
     color: #efefef;
     font-size: 2em;
     cursor: pointer;
+    &.delete-button {
+      font-size: 1.2em;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    }
   }
   input {
     background-color: hsl(0, 0, 30);

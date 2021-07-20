@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext } from "react";
 import { IItem } from "../../interfaces/item.interface";
-import { createItem } from "../../store/Actions";
+import { ACTIONS, createItem, deleteItem } from "../../store/Actions";
 import { DataContext } from "../../store/GlobalStore";
 import { calculateSummary } from "../../utils/common.utils";
 import { AuctionItem } from "../AuctionItem/AuctionItem";
@@ -21,13 +21,17 @@ export const ItemsList: React.FC<ItemsListProps> = ({ items }) => {
   useEffect(() => {
     handleCreateNewItem();
   }, []);
-  items.sort((el1, el2) => {
-    if (el1.value <= el2.value) return 1;
-    return -1;
-  });
+  const handleDeleteItems = (id: number) => {
+    return dispatch(deleteItem(id));
+  };
+  const sortByValue = (items: IItem[]) =>
+    items.sort((el1, el2) => {
+      if (el1.value <= el2.value) return 1;
+      return -1;
+    });
   const summaryValue = calculateSummary(state.items);
   return (
-    <main>
+    <div className="auction-container">
       <div className="item-list">
         <FlipMove
           typeName={null}
@@ -35,9 +39,13 @@ export const ItemsList: React.FC<ItemsListProps> = ({ items }) => {
           leaveAnimation="fade"
           maintainContainerHeight
         >
-          {items.map((item, index) => (
+          {sortByValue(items).map((item, index) => (
             <div key={item.id}>
-              <AuctionItem index={index} item={item} />
+              <AuctionItem
+                handleDelete={handleDeleteItems}
+                index={index}
+                item={item}
+              />
             </div>
           ))}
         </FlipMove>
@@ -46,6 +54,6 @@ export const ItemsList: React.FC<ItemsListProps> = ({ items }) => {
         +
       </button>
       <h2>TOTAL : {summaryValue}</h2>
-    </main>
+    </div>
   );
 };

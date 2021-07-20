@@ -37,6 +37,11 @@ export const reducers = (
           return item;
         }),
       };
+    case ACTIONS.DELETE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter(({ id }) => !(id === action.payload.id)),
+      };
     default:
       return state;
   }

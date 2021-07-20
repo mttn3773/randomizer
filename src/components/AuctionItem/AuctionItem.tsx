@@ -9,12 +9,18 @@ import {
 } from "../../store/Actions";
 import { DataContext } from "../../store/GlobalStore";
 import "./AuctionItem.scss";
+import { FaTrashAlt } from "react-icons/fa";
 interface AuctionItemProps {
   item: IItem;
   index: number;
+  handleDelete: (id: number) => void;
 }
 
-export const AuctionItem: React.FC<AuctionItemProps> = ({ item, index }) => {
+export const AuctionItem: React.FC<AuctionItemProps> = ({
+  item,
+  index,
+  handleDelete,
+}) => {
   const { dispatch } = useContext(DataContext);
   const nameInputRef = useRef<HTMLInputElement | null>(null);
   const valueInputRef = useRef<HTMLInputElement | null>(null);
@@ -88,6 +94,9 @@ export const AuctionItem: React.FC<AuctionItemProps> = ({ item, index }) => {
         defaultValue=""
         type="text"
       />
+      <button className="delete-button" onClick={() => handleDelete(item.id)}>
+        <FaTrashAlt />
+      </button>
     </div>
   );
 };

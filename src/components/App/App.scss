@@ -1,0 +1,11 @@
+section.items-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  .item-list-wrapper {
+    width: 80%;
+  }
+  .timer-wrapper {
+    width: 20%;
+  }
+}

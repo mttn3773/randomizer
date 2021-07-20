@@ -5,9 +5,14 @@ export enum ACTIONS {
   CHANGE_ITEMS_NAME = "CHANGE_ITEMS_NAME",
   CHANGE_ITEMS_VALUE = "CHANGE_ITEMS_VALUE",
   INCREMENT_ITEMS_VALUE = "INCREMENT_ITEMS_VALUE",
+  DELETE_ITEM = "DELETE_ITEM",
 }
 
 let maxId = 1;
+
+export const deleteItem = (id: number): IAction<{ id: number }> => {
+  return { type: ACTIONS.DELETE_ITEM, payload: { id } };
+};
 
 export const createItem = (): IAction<IItem> => {
   return {

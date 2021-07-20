@@ -12,7 +12,10 @@ import { useRef } from "react";
 import { calculateSpinAngle } from "../../utils/spin";
 import { useContext } from "react";
 import { DataContext } from "../../store/GlobalStore";
-import { mapItemsToNormalized } from "../../utils/items.utils.";
+import {
+  mapItemsForElimination,
+  mapItemsToNormalized,
+} from "../../utils/items.utils.";
 
 const WIDTH = 600;
 const HEIGHT = 600;
@@ -43,11 +46,22 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
   const [isEliminatingMode, setEliminatingMode] = useState<boolean>(false);
   const [normalizedItems, setNormalizedItems] = useState<INormalizedItem[]>([]);
   const [eliminatedItems, setEliminatedItems] = useState<number[]>([]);
+  const winnerText = () => {
+    if (isEliminatingMode) {
+      return (
+        <h1>
+          {winner && !animate
+            ? `${winner.name} was eliminated`
+            : "Eliminating..."}
+        </h1>
+      );
+    }
+    return <h1>Winner is {winner && !animate ? winner.name : "..."}</h1>;
+  };
   useEffect(() => {
-    const normalizedItems = mapItemsToNormalized(
-      items.filter(({ id }) => !eliminatedItems.includes(id)),
-      isEliminatingMode
-    );
+    const normalizedItems = isEliminatingMode
+      ? mapItemsForElimination(items, eliminatedItems)
+      : mapItemsToNormalized(items);
     setNormalizedItems(normalizedItems);
   }, [eliminatedItems, items, isEliminatingMode]);
   const wheelRef = useRef<SVGSVGElement | null>(null);
@@ -59,13 +73,12 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
     const resultArr: JSX.Element[] = [];
     let startPoint: Point = { x: centerX, y: 0 };
     let angle = -90;
-    normalizedItems.forEach(({ percentage, name }, index) => {
+    normalizedItems.forEach(({ percentage, name, id }, index) => {
       if (!percentage) return;
       const incrementAngle = converPercantageToDegrees(percentage);
       const textAngle = (angle * 2 + incrementAngle) / 2;
       angle += incrementAngle;
-      const [x, y] = polarToCartesian(centerX, centerY, radius, angle);
-      const endPoint: Point = { x, y };
+      const endPoint = polarToCartesian(centerX, centerY, radius, angle);
       const fillColor =
         index < colorArr.length
           ? colorArr[index]
@@ -92,6 +105,7 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
     });
     return resultArr;
   };
+
   const handleEliminate = (winner: INormalizedItem) => {
     setEliminatedItems((prev) => [...prev, winner.id]);
   };
@@ -112,12 +126,11 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
       })
       .to(wheelRef.current, { rotate: newAngle, duration: 5 });
   };
-
   const sectors = drawSectors();
   return (
-    <section>
+    <div className="game-container">
       <div
-        className="wheel-conteiner"
+        className="wheel-container"
         style={{
           position: "relative",
           display: "flex",
@@ -146,7 +159,7 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
         </svg>
       </div>
       <div className="winner-info">
-        {<h1>Winner is {winner && !animate ? winner.name : "..."}</h1>}
+        {winnerText()}
         <div>
           <input
             onChange={handleChangeMode}
@@ -162,6 +175,6 @@ export const SVGWheel: React.FC<SVGWheelProps> = ({}) => {
           ROLL
         </button>
       </div>
-    </section>
+    </div>
   );
 };
